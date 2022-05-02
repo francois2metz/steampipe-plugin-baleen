@@ -26,6 +26,16 @@ type Account struct {
 	Namespaces  []Namespace
 }
 
+type ErrorPages struct {
+	Custom404Page bool `json:"custom404Page"`
+	Custom500Page bool `json:"custom500Page"`
+}
+
+type Origin struct {
+	ErrorPages ErrorPages `json:"errorPages"`
+	URL        string     `json:"url"`
+}
+
 type Condition struct {
 	Type     string `json:"type"`
 	Value    string `json:"value"`
@@ -86,6 +96,28 @@ func (c *Client) GetAccount() (*Account, error) {
 	r.Namespaces = namespaces
 
 	return r, nil
+}
+
+func (c *Client) GetOrigin(namespace string) (*Origin, error) {
+	var res, err = c.r().SetCookies(
+		&http.Cookie{
+			Name:  "baleen-namespace",
+			Value: namespace,
+		}).Get("/api/configs/origin")
+
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving origin: %w", err)
+	}
+
+	if !res.IsSuccess() {
+		return nil, errors.New("error retrieving origin: " + res.Status)
+	}
+
+	origin := new(Origin)
+
+	res.UnmarshalJson(origin)
+
+	return origin, nil
 }
 
 func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, error) {

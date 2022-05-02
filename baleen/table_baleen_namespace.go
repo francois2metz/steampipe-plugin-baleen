@@ -3,8 +3,10 @@ package baleen
 import (
 	"context"
 
+	baleen "github.com/francois2metz/steampipe-plugin-baleen/baleen/client"
 	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
 )
 
 func tableBaleenNamespace() *plugin.Table {
@@ -14,9 +16,15 @@ func tableBaleenNamespace() *plugin.Table {
 		List: &plugin.ListConfig{
 			Hydrate: listNamespace,
 		},
+		HydrateDependencies: []plugin.HydrateDependencies{
+			{Func: getOrigin},
+		},
 		Columns: []*plugin.Column{
-			{Name: "id", Type: proto.ColumnType_STRING, Description: "Unique id of the namespace."},
+			{Name: "id", Type: proto.ColumnType_STRING, Description: "Unique ID of the namespace."},
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "Name of the namespace."},
+			{Name: "url", Hydrate: getOrigin, Type: proto.ColumnType_STRING, Description: "URL of the origin."},
+			{Name: "custom_404_page", Hydrate: getOrigin, Type: proto.ColumnType_BOOL, Transform: transform.FromField("ErrorPages.Custom404Page"), Description: "Use custom 404 page."},
+			{Name: "custom_500_page", Hydrate: getOrigin, Type: proto.ColumnType_BOOL, Transform: transform.FromField("ErrorPages.Custom500Page"), Description: "Use custom 500 page."},
 		},
 	}
 }
@@ -34,4 +42,20 @@ func listNamespace(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDa
 		d.StreamListItem(ctx, namespace)
 	}
 	return nil, nil
+}
+
+func getOrigin(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Trace("getOrigin")
+	namespace := h.Item.(baleen.Namespace)
+
+	client, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	origin, err := client.GetOrigin(namespace.ID)
+	if err != nil {
+		return nil, err
+	}
+	return origin, nil
 }
