@@ -44,11 +44,11 @@ func tableBaleenNamespace() *plugin.Table {
 				Description: "Use custom 404 page.",
 			},
 			{
-				Name:        "custom_500_page",
+				Name:        "custom_50x_page",
 				Hydrate:     getOrigin,
 				Type:        proto.ColumnType_BOOL,
-				Transform:   transform.FromField("ErrorPages.Custom500Page"),
-				Description: "Use custom 500 page.",
+				Transform:   transform.FromField("ErrorPages.Custom50xPage"),
+				Description: "Use custom 50x page.",
 			},
 		},
 	}

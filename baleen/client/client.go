@@ -28,7 +28,7 @@ type Account struct {
 
 type ErrorPages struct {
 	Custom404Page bool `json:"custom404Page"`
-	Custom500Page bool `json:"custom500Page"`
+	Custom50xPage bool `json:"custom50xPage"`
 }
 
 type Origin struct {
