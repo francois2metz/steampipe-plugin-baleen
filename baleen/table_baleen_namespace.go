@@ -12,7 +12,7 @@ import (
 func tableBaleenNamespace() *plugin.Table {
 	return &plugin.Table{
 		Name:        "baleen_namespace",
-		Description: "",
+		Description: "A namespace is a proxy with a configured origin and specific rules.",
 		List: &plugin.ListConfig{
 			Hydrate: listNamespace,
 		},
@@ -20,11 +20,36 @@ func tableBaleenNamespace() *plugin.Table {
 			{Func: getOrigin},
 		},
 		Columns: []*plugin.Column{
-			{Name: "id", Type: proto.ColumnType_STRING, Description: "Unique ID of the namespace."},
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "Name of the namespace."},
-			{Name: "url", Hydrate: getOrigin, Type: proto.ColumnType_STRING, Description: "URL of the origin."},
-			{Name: "custom_404_page", Hydrate: getOrigin, Type: proto.ColumnType_BOOL, Transform: transform.FromField("ErrorPages.Custom404Page"), Description: "Use custom 404 page."},
-			{Name: "custom_500_page", Hydrate: getOrigin, Type: proto.ColumnType_BOOL, Transform: transform.FromField("ErrorPages.Custom500Page"), Description: "Use custom 500 page."},
+			{
+				Name:        "id",
+				Type:        proto.ColumnType_STRING,
+				Description: "Unique ID of the namespace.",
+			},
+			{
+				Name:        "name",
+				Type:        proto.ColumnType_STRING,
+				Description: "Name of the namespace.",
+			},
+			{
+				Name:        "url",
+				Hydrate:     getOrigin,
+				Type:        proto.ColumnType_STRING,
+				Description: "URL of the origin.",
+			},
+			{
+				Name:        "custom_404_page",
+				Hydrate:     getOrigin,
+				Type:        proto.ColumnType_BOOL,
+				Transform:   transform.FromField("ErrorPages.Custom404Page"),
+				Description: "Use custom 404 page.",
+			},
+			{
+				Name:        "custom_500_page",
+				Hydrate:     getOrigin,
+				Type:        proto.ColumnType_BOOL,
+				Transform:   transform.FromField("ErrorPages.Custom500Page"),
+				Description: "Use custom 500 page.",
+			},
 		},
 	}
 }

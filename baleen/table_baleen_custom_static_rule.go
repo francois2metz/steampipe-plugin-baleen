@@ -11,21 +11,54 @@ import (
 func tableBaleenCustomStaticRule() *plugin.Table {
 	return &plugin.Table{
 		Name:        "baleen_custom_static_rule",
-		Description: "",
+		Description: "A static rule allow to classify traffic with some conditions.",
 		List: &plugin.ListConfig{
 			Hydrate:    listCustomStaticRule,
 			KeyColumns: plugin.SingleColumn("namespace"),
 		},
 		Columns: []*plugin.Column{
-			{Name: "namespace", Type: proto.ColumnType_STRING, Transform: transform.FromQual("namespace"), Description: "Namespace of the rule."},
+			{
+				Name:        "namespace",
+				Type:        proto.ColumnType_STRING,
+				Transform:   transform.FromQual("namespace"),
+				Description: "Namespace of the rule.",
+			},
 
-			{Name: "id", Type: proto.ColumnType_STRING, Description: "Unique ID of the rule."},
-			{Name: "tracking_id", Type: proto.ColumnType_STRING, Description: "Tracking ID of the rule."},
-			{Name: "category", Type: proto.ColumnType_STRING, Description: "Category of the rule."},
-			{Name: "enabled", Type: proto.ColumnType_BOOL, Description: "Is activated."},
-			{Name: "description", Type: proto.ColumnType_STRING, Description: "Description of the rule."},
-			{Name: "conditions", Type: proto.ColumnType_JSON, Description: "Conditions of the rule."},
-			{Name: "labels", Type: proto.ColumnType_JSON, Description: "Labels of the rule."},
+			{
+				Name:        "id",
+				Type:        proto.ColumnType_STRING,
+				Description: "Unique ID of the rule.",
+			},
+			{
+				Name:        "tracking_id",
+				Type:        proto.ColumnType_STRING,
+				Description: "Tracking ID of the rule.",
+			},
+			{
+				Name:        "category",
+				Type:        proto.ColumnType_STRING,
+				Description: "Category of the rule.",
+			},
+			{
+				Name:        "enabled",
+				Type:        proto.ColumnType_BOOL,
+				Description: "Is activated.",
+			},
+			{
+				Name:        "description",
+				Type:        proto.ColumnType_STRING,
+				Description: "Description of the rule.",
+			},
+			{
+				Name:        "conditions",
+				Type:        proto.ColumnType_JSON,
+				Description: "Conditions of the rule.",
+			},
+			{
+				Name:        "labels",
+				Type:        proto.ColumnType_JSON,
+				Description: "Labels of the rule.",
+			},
 		},
 	}
 }
