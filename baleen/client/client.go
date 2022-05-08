@@ -157,72 +157,62 @@ func (c *Client) requestWithNamespace(namespace string) *req.Request {
 		})
 }
 
-func (c *Client) getWithNamespace(namespace string, url string) (*req.Response, error) {
+func (c *Client) getWithNamespace(namespace string, url string, data interface{}) error {
 	res, err := c.requestWithNamespace(namespace).Get(url)
 
 	if err != nil {
-		return nil, fmt.Errorf("error retrieving %w: %w", url, err)
+		return fmt.Errorf("error retrieving %w: %w", url, err)
 	}
 
 	if !res.IsSuccess() {
-		return nil, fmt.Errorf("error retrieving %w: "+res.Status, url)
+		return fmt.Errorf("error retrieving %w: "+res.Status, url)
 	}
 
-	return res, nil
+	res.UnmarshalJson(data)
+
+	return nil
 }
 
 func (c *Client) GetOrigin(namespace string) (*Origin, error) {
-	res, err := c.getWithNamespace(namespace, "/api/configs/origin")
+	var origin Origin
+	err := c.getWithNamespace(namespace, "/api/configs/origin", &origin)
 
 	if err != nil {
 		return nil, err
 	}
 
-	origin := new(Origin)
-
-	res.UnmarshalJson(origin)
-
-	return origin, nil
+	return &origin, nil
 }
 
 func (c *Client) GetCache(namespace string) (*Cache, error) {
-	res, err := c.getWithNamespace(namespace, "/api/configs/cache")
+	var cache Cache
+	err := c.getWithNamespace(namespace, "/api/configs/cache", &cache)
 
 	if err != nil {
 		return nil, err
 	}
 
-	cache := new(Cache)
-
-	res.UnmarshalJson(cache)
-
-	return cache, nil
+	return &cache, nil
 }
 
 func (c *Client) GetWaf(namespace string) (*Waf, error) {
-	res, err := c.getWithNamespace(namespace, "/api/configs/waf")
+	var waf Waf
+	err := c.getWithNamespace(namespace, "/api/configs/waf", &waf)
 
 	if err != nil {
 		return nil, err
 	}
 
-	waf := new(Waf)
-
-	res.UnmarshalJson(waf)
-
-	return waf, nil
+	return &waf, nil
 }
 
 func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, error) {
-	res, err := c.getWithNamespace(namespace, "/api/configs/custom-static-rules")
+	var customStaticRules []CustomStaticRule
+	err := c.getWithNamespace(namespace, "/api/configs/custom-static-rules", &customStaticRules)
 
 	if err != nil {
 		return nil, err
 	}
-
-	customStaticRules := []CustomStaticRule{}
-
-	res.UnmarshalJson(&customStaticRules)
 
 	return customStaticRules, nil
 }
