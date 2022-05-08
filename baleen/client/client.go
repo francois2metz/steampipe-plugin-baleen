@@ -132,15 +132,25 @@ func (c *Client) requestWithNamespace(namespace string) *req.Request {
 		})
 }
 
-func (c *Client) GetOrigin(namespace string) (*Origin, error) {
-	res, err := c.requestWithNamespace(namespace).Get("/api/configs/origin")
+func (c *Client) getWithNamespace(namespace string, url string) (*req.Response, error) {
+	res, err := c.requestWithNamespace(namespace).Get(url)
 
 	if err != nil {
-		return nil, fmt.Errorf("error retrieving origin: %w", err)
+		return nil, fmt.Errorf("error retrieving %w: %w", url, err)
 	}
 
 	if !res.IsSuccess() {
-		return nil, errors.New("error retrieving origin: " + res.Status)
+		return nil, fmt.Errorf("error retrieving %w: "+res.Status, url)
+	}
+
+	return res, nil
+}
+
+func (c *Client) GetOrigin(namespace string) (*Origin, error) {
+	res, err := c.getWithNamespace(namespace, "/api/configs/origin")
+
+	if err != nil {
+		return nil, err
 	}
 
 	origin := new(Origin)
@@ -151,14 +161,10 @@ func (c *Client) GetOrigin(namespace string) (*Origin, error) {
 }
 
 func (c *Client) GetCache(namespace string) (*Cache, error) {
-	res, err := c.requestWithNamespace(namespace).Get("/api/configs/cache")
+	res, err := c.getWithNamespace(namespace, "/api/configs/cache")
 
 	if err != nil {
-		return nil, fmt.Errorf("error retrieving cache: %w", err)
-	}
-
-	if !res.IsSuccess() {
-		return nil, errors.New("error retrieving cache: " + res.Status)
+		return nil, err
 	}
 
 	cache := new(Cache)
@@ -169,14 +175,10 @@ func (c *Client) GetCache(namespace string) (*Cache, error) {
 }
 
 func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, error) {
-	res, err := c.requestWithNamespace(namespace).Get("/api/configs/custom-static-rules")
+	res, err := c.getWithNamespace(namespace, "/api/configs/custom-static-rules")
 
 	if err != nil {
-		return nil, fmt.Errorf("error retrieving custom-static-rules: %w", err)
-	}
-
-	if !res.IsSuccess() {
-		return nil, errors.New("error retrieving custom-static-rules: " + res.Status)
+		return nil, err
 	}
 
 	customStaticRules := []CustomStaticRule{}
