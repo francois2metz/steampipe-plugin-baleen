@@ -98,12 +98,17 @@ func (c *Client) GetAccount() (*Account, error) {
 	return r, nil
 }
 
-func (c *Client) GetOrigin(namespace string) (*Origin, error) {
-	var res, err = c.r().SetCookies(
+
+func (c *Client) requestWithNamespace(namespace string) *req.Request {
+	return c.r().SetCookies(
 		&http.Cookie{
 			Name:  "baleen-namespace",
 			Value: namespace,
-		}).Get("/api/configs/origin")
+		})
+}
+
+func (c *Client) GetOrigin(namespace string) (*Origin, error) {
+	var res, err = c.requestWithNamespace(namespace).Get("/api/configs/origin")
 
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving origin: %w", err)
@@ -121,11 +126,7 @@ func (c *Client) GetOrigin(namespace string) (*Origin, error) {
 }
 
 func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, error) {
-	var res, err = c.r().SetCookies(
-		&http.Cookie{
-			Name:  "baleen-namespace",
-			Value: namespace,
-		}).Get("/api/configs/custom-static-rules")
+	var res, err = c.requestWithNamespace(namespace).Get("/api/configs/custom-static-rules")
 
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving custom-static-rules: %w", err)
