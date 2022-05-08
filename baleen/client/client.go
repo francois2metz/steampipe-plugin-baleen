@@ -62,6 +62,31 @@ type Cache struct {
 	Directive Directive `json:"directive"`
 }
 
+type CrsThematics struct {
+	ScannerDetection    bool `json:"scannerDetection"`
+	ProtocolEnforcement bool `json:"protocolEnforcement"`
+	ProtocolAttack      bool `json:"protocolAttack"`
+	Lfi                 bool `json:"lfi"`
+	Rfi                 bool `json:"rfi"`
+	Rce                 bool `json:"rce"`
+	PhpInjection        bool `json:"phpInjection"`
+	Xss                 bool `json:"xss"`
+	Sqli                bool `json:"sqli"`
+	SessionFixation     bool `json:"sessionFixation"`
+	GeneralDataLeakages bool `json:"generalDataLeakages"`
+	SqlDataLeakages     bool `json:"sqlDataLeakages"`
+	JavaDataLeakages    bool `json:"javaDataLeakages"`
+	PhpDataLeakages     bool `json:"phpDataLeakages"`
+	IisDataLeakages     bool `json:"iisDataLeakages"`
+}
+
+type Waf struct {
+	Enabled             bool         `json:"enabled"`
+	DetectionOnly       bool         `json:"detectionOnly"`
+	CrsSensitivityLevel bool         `json:"crsSensitivityLevel"`
+	CrsThematics        CrsThematics `json:"crsThematics"`
+}
+
 type Condition struct {
 	Type     string `json:"type"`
 	Value    string `json:"value"`
@@ -172,6 +197,20 @@ func (c *Client) GetCache(namespace string) (*Cache, error) {
 	res.UnmarshalJson(cache)
 
 	return cache, nil
+}
+
+func (c *Client) GetWaf(namespace string) (*Waf, error) {
+	res, err := c.getWithNamespace(namespace, "/api/configs/waf")
+
+	if err != nil {
+		return nil, err
+	}
+
+	waf := new(Waf)
+
+	res.UnmarshalJson(waf)
+
+	return waf, nil
 }
 
 func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, error) {

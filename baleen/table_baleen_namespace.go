@@ -19,6 +19,7 @@ func tableBaleenNamespace() *plugin.Table {
 		HydrateDependencies: []plugin.HydrateDependencies{
 			{Func: getOrigin},
 			{Func: getCache},
+			{Func: getWaf},
 		},
 		Columns: []*plugin.Column{
 			{
@@ -52,10 +53,17 @@ func tableBaleenNamespace() *plugin.Table {
 				Description: "Use custom 50x page.",
 			},
 			{
-				Name:        "cache",
+				Name:        "cdn_enabled",
 				Hydrate:     getCache,
 				Type:        proto.ColumnType_BOOL,
 				Description: "Cache enabled.",
+				Transform:   transform.FromField("Enabled"),
+			},
+			{
+				Name:        "waf_enabled",
+				Hydrate:     getWaf,
+				Type:        proto.ColumnType_BOOL,
+				Description: "Waf enabled.",
 				Transform:   transform.FromField("Enabled"),
 			},
 		},
@@ -107,4 +115,20 @@ func getCache(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (
 		return nil, err
 	}
 	return cache, nil
+}
+
+func getWaf(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Trace("getWaf")
+	namespace := h.Item.(baleen.Namespace)
+
+	client, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	waf, err := client.GetWaf(namespace.ID)
+	if err != nil {
+		return nil, err
+	}
+	return waf, nil
 }
