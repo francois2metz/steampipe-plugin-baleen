@@ -36,6 +36,32 @@ type Origin struct {
 	URL        string     `json:"url"`
 }
 
+type Webp struct {
+	Enabled bool `json:"enabled"`
+}
+
+type ResourcePattern struct {
+	Pattern string `json:"pattern"`
+	Rank    int    `json:"rank"`
+}
+
+type GlobalDuration struct {
+	Value int    `json:"value"`
+	Unit  string `json:"unit"`
+}
+
+type Directive struct {
+	ResourcePatterns        []ResourcePattern `json:"resourcePatterns"`
+	DefaultResourcePatterns []string          `json:"defaultResourcePatterns"`
+	GlobalDuration          GlobalDuration    `json:"globalDuration"`
+}
+
+type Cache struct {
+	Enabled   bool      `json:"enabled"`
+	Webp      Webp      `json:"webp"`
+	Directive Directive `json:"directive"`
+}
+
 type Condition struct {
 	Type     string `json:"type"`
 	Value    string `json:"value"`
@@ -122,6 +148,24 @@ func (c *Client) GetOrigin(namespace string) (*Origin, error) {
 	res.UnmarshalJson(origin)
 
 	return origin, nil
+}
+
+func (c *Client) GetCache(namespace string) (*Cache, error) {
+	res, err := c.requestWithNamespace(namespace).Get("/api/configs/cache")
+
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving cache: %w", err)
+	}
+
+	if !res.IsSuccess() {
+		return nil, errors.New("error retrieving cache: " + res.Status)
+	}
+
+	cache := new(Cache)
+
+	res.UnmarshalJson(cache)
+
+	return cache, nil
 }
 
 func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, error) {

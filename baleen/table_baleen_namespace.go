@@ -18,6 +18,7 @@ func tableBaleenNamespace() *plugin.Table {
 		},
 		HydrateDependencies: []plugin.HydrateDependencies{
 			{Func: getOrigin},
+			{Func: getCache},
 		},
 		Columns: []*plugin.Column{
 			{
@@ -49,6 +50,13 @@ func tableBaleenNamespace() *plugin.Table {
 				Type:        proto.ColumnType_BOOL,
 				Transform:   transform.FromField("ErrorPages.Custom50xPage"),
 				Description: "Use custom 50x page.",
+			},
+			{
+				Name:        "cache",
+				Hydrate:     getCache,
+				Type:        proto.ColumnType_BOOL,
+				Description: "Cache enabled.",
+				Transform:   transform.FromField("Enabled"),
 			},
 		},
 	}
@@ -83,4 +91,20 @@ func getOrigin(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 		return nil, err
 	}
 	return origin, nil
+}
+
+func getCache(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Trace("getCache")
+	namespace := h.Item.(baleen.Namespace)
+
+	client, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	cache, err := client.GetCache(namespace.ID)
+	if err != nil {
+		return nil, err
+	}
+	return cache, nil
 }
