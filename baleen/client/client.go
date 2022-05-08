@@ -55,7 +55,7 @@ type CustomStaticRule struct {
 type ClientOption func(c *Client)
 
 func New(options ...ClientOption) *Client {
-	var c = &Client{
+	c := &Client{
 		c: req.C(),
 	}
 	c.c.SetBaseURL("https://console.baleen.cloud")
@@ -68,7 +68,7 @@ func New(options ...ClientOption) *Client {
 }
 
 func (c *Client) GetAccount() (*Account, error) {
-	var res, err = c.r().Get("/api/account")
+	res, err := c.r().Get("/api/account")
 
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving account: %w", err)
@@ -78,9 +78,9 @@ func (c *Client) GetAccount() (*Account, error) {
 		return nil, errors.New("error retrieving account: " + res.Status)
 	}
 
-	var r = new(Account)
+	account := new(Account)
 
-	res.UnmarshalJson(r)
+	res.UnmarshalJson(account)
 	var result map[string]interface{}
 	bytes, err := res.ToBytes()
 	json.Unmarshal(bytes, &result)
@@ -93,11 +93,10 @@ func (c *Client) GetAccount() (*Account, error) {
 		namespace := Namespace{ID: id, Name: name.(string)}
 		namespaces = append(namespaces, namespace)
 	}
-	r.Namespaces = namespaces
+	account.Namespaces = namespaces
 
-	return r, nil
+	return account, nil
 }
-
 
 func (c *Client) requestWithNamespace(namespace string) *req.Request {
 	return c.r().SetCookies(
@@ -108,7 +107,7 @@ func (c *Client) requestWithNamespace(namespace string) *req.Request {
 }
 
 func (c *Client) GetOrigin(namespace string) (*Origin, error) {
-	var res, err = c.requestWithNamespace(namespace).Get("/api/configs/origin")
+	res, err := c.requestWithNamespace(namespace).Get("/api/configs/origin")
 
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving origin: %w", err)
@@ -126,7 +125,7 @@ func (c *Client) GetOrigin(namespace string) (*Origin, error) {
 }
 
 func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, error) {
-	var res, err = c.requestWithNamespace(namespace).Get("/api/configs/custom-static-rules")
+	res, err := c.requestWithNamespace(namespace).Get("/api/configs/custom-static-rules")
 
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving custom-static-rules: %w", err)
