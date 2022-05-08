@@ -20,6 +20,7 @@ func tableBaleenNamespace() *plugin.Table {
 			{Func: getOrigin},
 			{Func: getCache},
 			{Func: getWaf},
+			{Func: getHeaders},
 		},
 		Columns: []*plugin.Column{
 			{
@@ -65,6 +66,20 @@ func tableBaleenNamespace() *plugin.Table {
 				Type:        proto.ColumnType_BOOL,
 				Description: "Waf enabled.",
 				Transform:   transform.FromField("Enabled"),
+			},
+			{
+				Name:        "headers_deny_frame_options",
+				Hydrate:     getHeaders,
+				Type:        proto.ColumnType_BOOL,
+				Description: "Add X-Frame-Options: deny http header.",
+				Transform:   transform.FromField("DenyFrameOptions"),
+			},
+			{
+				Name:        "headers_no_sniff_mime_type",
+				Hydrate:     getHeaders,
+				Type:        proto.ColumnType_BOOL,
+				Description: "Add X-Content-Type-Options: nosniff http header.",
+				Transform:   transform.FromField("NoSniffMimeType"),
 			},
 		},
 	}
@@ -131,4 +146,20 @@ func getWaf(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (in
 		return nil, err
 	}
 	return waf, nil
+}
+
+func getHeaders(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	plugin.Logger(ctx).Trace("getHeaders")
+	namespace := h.Item.(baleen.Namespace)
+
+	client, err := connect(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	headers, err := client.GetHeaders(namespace.ID)
+	if err != nil {
+		return nil, err
+	}
+	return headers, nil
 }

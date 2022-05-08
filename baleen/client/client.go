@@ -87,6 +87,11 @@ type Waf struct {
 	CrsThematics        CrsThematics `json:"crsThematics"`
 }
 
+type Headers struct {
+	DenyFrameOptions bool `json:"denyFrameOptions"`
+	NoSniffMimeType  bool `json:"noSniffMimeType"`
+}
+
 type Condition struct {
 	Type     string `json:"type"`
 	Value    string `json:"value"`
@@ -204,6 +209,17 @@ func (c *Client) GetWaf(namespace string) (*Waf, error) {
 	}
 
 	return &waf, nil
+}
+
+func (c *Client) GetHeaders(namespace string) (*Headers, error) {
+	var headers Headers
+	err := c.getWithNamespace(namespace, "/api/configs/headers", &headers)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &headers, nil
 }
 
 func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, error) {
