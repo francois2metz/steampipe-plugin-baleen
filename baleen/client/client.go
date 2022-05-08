@@ -108,6 +108,24 @@ type CustomStaticRule struct {
 	Labels      []string      `json:"labels"`
 }
 
+type RedirectRule struct {
+	Source          string `json:"source"`
+	Destination     string `json:"destination"`
+	Type            int    `json:"type"`
+	WithQueryString bool   `json:"withQueryString"`
+}
+
+type RewriteRule struct {
+	Source          string `json:"source"`
+	Destination     string `json:"destination"`
+	WithQueryString bool   `json:"withQueryString"`
+}
+
+type UrlRules struct {
+	RedirectRules []RedirectRule `json:"redirectRules"`
+	RewriteRules  []RewriteRule  `json:"rewriteRules"`
+}
+
 type ClientOption func(c *Client)
 
 func New(options ...ClientOption) *Client {
@@ -231,6 +249,17 @@ func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, err
 	}
 
 	return customStaticRules, nil
+}
+
+func (c *Client) GetUrlRules(namespace string) (*UrlRules, error) {
+	var urlRules UrlRules
+	err := c.getWithNamespace(namespace, "/api/configs/url-rules", &urlRules)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &urlRules, nil
 }
 
 func (c *Client) r() *req.Request {
