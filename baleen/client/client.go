@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
+	"strconv"
 	"time"
 
 	req "github.com/imroc/req/v3"
@@ -118,6 +120,39 @@ type CrsThematic struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Group       string `json:"group"`
+}
+
+type AccessLog struct {
+	Timestamp               time.Time `json:"timestamp"`
+	Status                  string    `json:"status"`
+	RemoteAddr              net.IP    `json:"remoteAddr"`
+	Upstream                string    `json:"upstream"`
+	Scheme                  string    `json:"scheme"`
+	RequestFateAction       string    `json:"requestFateAction"`
+	BodyBytesSent           string    `json:"bodyBytesSent"`
+	BotCategory             string    `json:"botCategory"`
+	TriggeredRuleId         string    `json:"triggeredRuleId"`
+	TriggeredRuleTrackingID string    `json:"triggeredRuleTrackingId"`
+	HttpHost                string    `json:"httpHost"`
+	HttpUserAgent           string    `json:"httpUserAgent"`
+	RemoteUser              string    `json:"remoteUser"`
+	RequestTime             string    `json:"requestTime"`
+	ClientIP                net.IP    `json:"clientIp"`
+	HttpXForwardedFor       string    `json:"httpXForwardedFor"`
+	HttpReferrer            string    `json:"httpReferrer"`
+	UpstreamResponseTime    string    `json:"upstreamResponseTime"`
+	RequestFate             string    `json:"requestFate"`
+	RequastJa3              string    `json:"requestJa3"`
+	SslProtocol             string    `json:"sslProtocol"`
+	ServerProtocol          string    `json:"serverProtocol"`
+	RequestUri              string    `json:"requestUri"`
+	RequestMethod           string    `json:"requestMethod"`
+	RequestIsp              string    `json:"requestIsp"`
+	RequestCountry          string    `json:"requestCountry"`
+	RequestAsn              string    `json:"requestAsn"`
+	RequestConnectionType   string    `json:"requestConnectionType"`
+	RequestIsAnonymousProxy string    `json:"requestIsAnonymousProxy"`
+	ResponseContentType     string    `json:"responseContentType"`
 }
 
 type ClientOption func(c *Client)
@@ -284,6 +319,47 @@ func (c *Client) GetUrlRules(namespace string) (*UrlRules, error) {
 	}
 
 	return &urlRules, nil
+}
+
+type AccessLogParams struct {
+	Start int
+	End   int
+	Size  int
+	Page  int
+}
+
+type PaginationInfo struct {
+	TotalCount int
+	TotalHits  int
+}
+
+func (c *Client) GetAccessLogs(namespace string, params AccessLogParams) ([]AccessLog, *PaginationInfo, error) {
+	var accessLogs []AccessLog
+	res, err := c.requestWithNamespace(namespace).SetQueryParams(map[string]string{
+		"start": strconv.Itoa(params.Start),
+		"end":   strconv.Itoa(params.End),
+		"size":  strconv.Itoa(params.Size),
+		"page":  strconv.Itoa(params.Page),
+	}).SetBodyJsonString(`{"filters":[]}`).Post("/api/logs/access-logs")
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if !res.IsSuccess() {
+		return nil, nil, fmt.Errorf("error retrieving %w: "+res.Status, "access-logs")
+	}
+
+	res.UnmarshalJson(&accessLogs)
+
+	totalCount, _ := strconv.Atoi(res.Header.Get("x-total-count"))
+	totalHits, _ := strconv.Atoi(res.Header.Get("x-total-hits"))
+	pagination := PaginationInfo{
+		TotalCount: totalCount,
+		TotalHits:  totalHits,
+	}
+
+	return accessLogs, &pagination, nil
 }
 
 func (c *Client) r() *req.Request {
