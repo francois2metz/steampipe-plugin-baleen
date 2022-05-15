@@ -16,7 +16,7 @@ select
   category,
   description
 from
-  baleen_namespace_custom_static_rule
+  baleen_custom_static_rule
 where
   namespace='kfuAlneru9fjrG==';
 ```
