@@ -18,6 +18,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		TableMap: map[string]*plugin.Table{
 			"baleen_custom_static_rule": tableBaleenCustomStaticRule(),
 			"baleen_namespace":          tableBaleenNamespace(),
+			"baleen_owasp":              tableBaleenOwasp(),
 			"baleen_redirect_rule":      tableBaleenRedirectRule(),
 			"baleen_rewrite_rule":       tableBaleenRewriteRule(),
 		},

@@ -62,29 +62,16 @@ type Cache struct {
 	Directive Directive `json:"directive"`
 }
 
-type CrsThematics struct {
-	ScannerDetection    bool `json:"scannerDetection"`
-	ProtocolEnforcement bool `json:"protocolEnforcement"`
-	ProtocolAttack      bool `json:"protocolAttack"`
-	Lfi                 bool `json:"lfi"`
-	Rfi                 bool `json:"rfi"`
-	Rce                 bool `json:"rce"`
-	PhpInjection        bool `json:"phpInjection"`
-	Xss                 bool `json:"xss"`
-	Sqli                bool `json:"sqli"`
-	SessionFixation     bool `json:"sessionFixation"`
-	GeneralDataLeakages bool `json:"generalDataLeakages"`
-	SqlDataLeakages     bool `json:"sqlDataLeakages"`
-	JavaDataLeakages    bool `json:"javaDataLeakages"`
-	PhpDataLeakages     bool `json:"phpDataLeakages"`
-	IisDataLeakages     bool `json:"iisDataLeakages"`
+type CrsThematicStatus struct {
+	ID      string
+	Enabled bool
 }
 
 type Waf struct {
-	Enabled             bool         `json:"enabled"`
-	DetectionOnly       bool         `json:"detectionOnly"`
-	CrsSensitivityLevel bool         `json:"crsSensitivityLevel"`
-	CrsThematics        CrsThematics `json:"crsThematics"`
+	Enabled             bool `json:"enabled"`
+	DetectionOnly       bool `json:"detectionOnly"`
+	CrsSensitivityLevel bool `json:"crsSensitivityLevel"`
+	CrsThematics        []CrsThematicStatus
 }
 
 type Headers struct {
@@ -124,6 +111,13 @@ type RewriteRule struct {
 type UrlRules struct {
 	RedirectRules []RedirectRule `json:"redirectRules"`
 	RewriteRules  []RewriteRule  `json:"rewriteRules"`
+}
+
+type CrsThematic struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Group       string `json:"group"`
 }
 
 type ClientOption func(c *Client)
@@ -180,25 +174,25 @@ func (c *Client) requestWithNamespace(namespace string) *req.Request {
 		})
 }
 
-func (c *Client) getWithNamespace(namespace string, url string, data interface{}) error {
+func (c *Client) getWithNamespace(namespace string, url string, data interface{}) (*req.Response, error) {
 	res, err := c.requestWithNamespace(namespace).Get(url)
 
 	if err != nil {
-		return fmt.Errorf("error retrieving %w: %w", url, err)
+		return res, fmt.Errorf("error retrieving %w: %w", url, err)
 	}
 
 	if !res.IsSuccess() {
-		return fmt.Errorf("error retrieving %w: "+res.Status, url)
+		return res, fmt.Errorf("error retrieving %w: "+res.Status, url)
 	}
 
 	res.UnmarshalJson(data)
 
-	return nil
+	return res, nil
 }
 
 func (c *Client) GetOrigin(namespace string) (*Origin, error) {
 	var origin Origin
-	err := c.getWithNamespace(namespace, "/api/configs/origin", &origin)
+	_, err := c.getWithNamespace(namespace, "/api/configs/origin", &origin)
 
 	if err != nil {
 		return nil, err
@@ -209,7 +203,7 @@ func (c *Client) GetOrigin(namespace string) (*Origin, error) {
 
 func (c *Client) GetCache(namespace string) (*Cache, error) {
 	var cache Cache
-	err := c.getWithNamespace(namespace, "/api/configs/cache", &cache)
+	_, err := c.getWithNamespace(namespace, "/api/configs/cache", &cache)
 
 	if err != nil {
 		return nil, err
@@ -220,18 +214,48 @@ func (c *Client) GetCache(namespace string) (*Cache, error) {
 
 func (c *Client) GetWaf(namespace string) (*Waf, error) {
 	var waf Waf
-	err := c.getWithNamespace(namespace, "/api/configs/waf", &waf)
+	res, err := c.getWithNamespace(namespace, "/api/configs/waf", &waf)
 
 	if err != nil {
 		return nil, err
 	}
 
+	var result map[string]interface{}
+	bytes, err := res.ToBytes()
+
+	if err != nil {
+		return nil, err
+	}
+
+	json.Unmarshal(bytes, &result)
+
+	crsThematicsObject := result["crsThematics"].(map[string]interface{})
+
+	crsThematicsStatuses := []CrsThematicStatus{}
+
+	for id, enabled := range crsThematicsObject {
+		crsThematic := CrsThematicStatus{ID: id, Enabled: enabled.(bool)}
+		crsThematicsStatuses = append(crsThematicsStatuses, crsThematic)
+	}
+	waf.CrsThematics = crsThematicsStatuses
+
 	return &waf, nil
+}
+
+func (c *Client) GetCrsThematics(namespace string) ([]CrsThematic, error) {
+	var crsThematics []CrsThematic
+	_, err := c.getWithNamespace(namespace, "/api/refs/waf/crs-thematics", &crsThematics)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return crsThematics, nil
 }
 
 func (c *Client) GetHeaders(namespace string) (*Headers, error) {
 	var headers Headers
-	err := c.getWithNamespace(namespace, "/api/configs/headers", &headers)
+	_, err := c.getWithNamespace(namespace, "/api/configs/headers", &headers)
 
 	if err != nil {
 		return nil, err
@@ -242,7 +266,7 @@ func (c *Client) GetHeaders(namespace string) (*Headers, error) {
 
 func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, error) {
 	var customStaticRules []CustomStaticRule
-	err := c.getWithNamespace(namespace, "/api/configs/custom-static-rules", &customStaticRules)
+	_, err := c.getWithNamespace(namespace, "/api/configs/custom-static-rules", &customStaticRules)
 
 	if err != nil {
 		return nil, err
@@ -253,7 +277,7 @@ func (c *Client) GetCustomStaticRules(namespace string) ([]CustomStaticRule, err
 
 func (c *Client) GetUrlRules(namespace string) (*UrlRules, error) {
 	var urlRules UrlRules
-	err := c.getWithNamespace(namespace, "/api/configs/url-rules", &urlRules)
+	_, err := c.getWithNamespace(namespace, "/api/configs/url-rules", &urlRules)
 
 	if err != nil {
 		return nil, err
