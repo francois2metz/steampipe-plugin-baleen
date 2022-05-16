@@ -3,7 +3,7 @@ organization: francois2metz
 category: ["saas"]
 brand_color: "#0528f2"
 display_name: "Baleen"
-short_name: "Baleen"
+short_name: "baleen"
 description: "Steampipe plugin for querying Baleen."
 og_description: "Query Baleen with SQL! Open source CLI. No DB required."
 icon_url: "/images/plugins/francois2metz/baleen.svg"
