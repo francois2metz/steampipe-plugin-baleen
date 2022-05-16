@@ -51,11 +51,13 @@ func tableBaleenRedirectRule() *plugin.Table {
 func listRedirectRule(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	client, err := connect(ctx, d)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.listRedirectRule", "connection_error", err)
 		return nil, err
 	}
 	namespace := d.KeyColumnQuals["namespace"].GetStringValue()
 	rules, err := client.GetUrlRules(namespace)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.listRedirectRule", err)
 		return nil, err
 	}
 	for _, rule := range rules.RedirectRules {

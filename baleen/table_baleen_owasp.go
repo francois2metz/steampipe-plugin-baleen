@@ -64,15 +64,18 @@ type CrsThematicStatus struct {
 func listOwasp(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	client, err := connect(ctx, d)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.listOwasp", "connection_error", err)
 		return nil, err
 	}
 	namespace := d.KeyColumnQuals["namespace"].GetStringValue()
 	thematics, err := client.GetCrsThematics(namespace)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.listOwasp.GetCrsThematics", err)
 		return nil, err
 	}
 	waf, err := client.GetWaf(namespace)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.listOwasp.GetWaf", err)
 		return nil, err
 	}
 

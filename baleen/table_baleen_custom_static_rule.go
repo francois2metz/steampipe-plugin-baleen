@@ -66,11 +66,13 @@ func tableBaleenCustomStaticRule() *plugin.Table {
 func listCustomStaticRule(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	client, err := connect(ctx, d)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.listCustomStaticRule", "connection_error", err)
 		return nil, err
 	}
 	namespace := d.KeyColumnQuals["namespace"].GetStringValue()
 	rules, err := client.GetCustomStaticRules(namespace)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.listCustomStaticRule", err)
 		return nil, err
 	}
 	for _, rule := range rules {

@@ -88,10 +88,12 @@ func tableBaleenNamespace() *plugin.Table {
 func listNamespace(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	client, err := connect(ctx, d)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.listNamespace", "connection_error", err)
 		return nil, err
 	}
 	account, err := client.GetAccount()
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_namespace.listNamespace", err)
 		return nil, err
 	}
 	for _, namespace := range account.Namespaces {
@@ -106,11 +108,13 @@ func getOrigin(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 
 	client, err := connect(ctx, d)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.getOrigin", "connection_error", err)
 		return nil, err
 	}
 
 	origin, err := client.GetOrigin(namespace.ID)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_namespace.getOrigin", err)
 		return nil, err
 	}
 	return origin, nil
@@ -122,11 +126,13 @@ func getCache(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (
 
 	client, err := connect(ctx, d)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.getCache", "connection_error", err)
 		return nil, err
 	}
 
 	cache, err := client.GetCache(namespace.ID)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_namespace.getCache", err)
 		return nil, err
 	}
 	return cache, nil
@@ -138,11 +144,13 @@ func getWaf(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (in
 
 	client, err := connect(ctx, d)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.getWaf", "connection_error", err)
 		return nil, err
 	}
 
 	waf, err := client.GetWaf(namespace.ID)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_namespace.getWaf", err)
 		return nil, err
 	}
 	return waf, nil
@@ -154,11 +162,13 @@ func getHeaders(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 
 	client, err := connect(ctx, d)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_owasp.getHeaders", "connection_error", err)
 		return nil, err
 	}
 
 	headers, err := client.GetHeaders(namespace.ID)
 	if err != nil {
+		plugin.Logger(ctx).Error("baleen_namespace.getHeaders", err)
 		return nil, err
 	}
 	return headers, nil
