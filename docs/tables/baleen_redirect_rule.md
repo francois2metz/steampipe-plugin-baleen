@@ -19,3 +19,16 @@ from
 where
   namespace='kfuAlneru9fjrG==';
 ```
+
+### List temporary redirection
+
+```sql
+select
+  source,
+  destination
+from
+  baleen_redirect_rule
+where
+  namespace='kfuAlneru9fjrG=='
+  and type=302;
+```

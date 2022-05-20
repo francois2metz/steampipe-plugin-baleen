@@ -19,3 +19,16 @@ from
 where
   namespace='kfuAlneru9fjrG==';
 ```
+
+### List rewrite rules that rewrite /document URLs
+
+```sql
+select
+  source,
+  destination
+from
+  baleen_rewrite_rule
+where
+  namespace='kfuAlneru9fjrG=='
+  and source LIKE '/document%';
+```

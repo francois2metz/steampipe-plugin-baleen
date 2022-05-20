@@ -34,3 +34,31 @@ from
 join
   baleen_namespace n on csr.namespace = n.id;
 ```
+
+### List enabled static rules of a namespace
+
+```sql
+select
+  id,
+  category,
+  description
+from
+  baleen_custom_static_rule
+where
+  namespace='kfuAlneru9fjrG=='
+  and enabled;
+```
+
+### List static custom that block traffic
+
+```sql
+select
+  id,
+  category,
+  description
+from
+  baleen_custom_static_rule
+where
+  namespace='kfuAlneru9fjrG=='
+  and category='block';
+```
