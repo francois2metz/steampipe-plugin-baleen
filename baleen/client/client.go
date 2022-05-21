@@ -213,11 +213,11 @@ func (c *Client) getWithNamespace(namespace string, url string, data interface{}
 	res, err := c.requestWithNamespace(namespace).Get(url)
 
 	if err != nil {
-		return res, fmt.Errorf("error retrieving %w: %w", url, err)
+		return res, fmt.Errorf("error retrieving %q: %q", url, err)
 	}
 
 	if !res.IsSuccess() {
-		return res, fmt.Errorf("error retrieving %w: "+res.Status, url)
+		return res, fmt.Errorf("error retrieving %q: %d", url, res.Status)
 	}
 
 	res.UnmarshalJson(data)
@@ -347,7 +347,7 @@ func (c *Client) GetAccessLogs(namespace string, params AccessLogParams) ([]Acce
 	}
 
 	if !res.IsSuccess() {
-		return nil, nil, fmt.Errorf("error retrieving %w: "+res.Status, "access-logs")
+		return nil, nil, fmt.Errorf("error retrieving access-logs: %d", res.Status)
 	}
 
 	res.UnmarshalJson(&accessLogs)
