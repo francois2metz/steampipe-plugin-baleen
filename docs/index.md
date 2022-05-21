@@ -61,8 +61,11 @@ connection "baleen" {
     # Ask the support to get it: https://support.baleen.cloud/hc/fr/articles/360017482439-G%C3%A9n%C3%A9ral-Utiliser-les-APIs
     token = "xxxxx-xxx-xxxx-xxxx-xxxx"
 }
-
 ```
+
+You can also use environment variables:
+
+- `BALEEN_TOKEN` for the API token (ex: xxxxx-xxx-xxxx-xxxx-xxxx)
 
 ## Get Involved
 
