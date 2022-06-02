@@ -18,10 +18,6 @@ func connect(ctx context.Context, d *plugin.QueryData) (*baleen.Client, error) {
 
 	baleenConfig := GetConfig(d.Connection)
 
-	if &baleenConfig == nil {
-		return nil, errors.New("You must have a baleen config file")
-	}
-
 	token := os.Getenv("BALEEN_TOKEN")
 
 	if baleenConfig.Token != nil {

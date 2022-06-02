@@ -148,10 +148,20 @@ func (c *Client) GetAccount() (*Account, error) {
 
 	account := new(Account)
 
-	res.UnmarshalJson(account)
+	err = res.UnmarshalJson(account)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling JSON: %q", err)
+	}
+
 	var result map[string]interface{}
 	bytes, err := res.ToBytes()
-	json.Unmarshal(bytes, &result)
+	if err != nil {
+		return nil, fmt.Errorf("error calling ToBytes: %q", err)
+	}
+	err = json.Unmarshal(bytes, &result)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling JSON: %q", err)
+	}
 
 	namespacesObject := result["namespaces"].(map[string]interface{})
 
@@ -182,10 +192,13 @@ func (c *Client) getWithNamespace(namespace string, url string, data interface{}
 	}
 
 	if !res.IsSuccess() {
-		return res, fmt.Errorf("error retrieving %q: %d", url, res.Status)
+		return res, fmt.Errorf("error retrieving %q: %q", url, res.Status)
 	}
 
-	res.UnmarshalJson(data)
+	err = res.UnmarshalJson(data)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling JSON: %q", err)
+	}
 
 	return res, nil
 }
@@ -227,7 +240,10 @@ func (c *Client) GetWaf(namespace string) (*Waf, error) {
 		return nil, err
 	}
 
-	json.Unmarshal(bytes, &result)
+	err = json.Unmarshal(bytes, &result)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling JSON: %q", err)
+	}
 
 	crsThematicsObject := result["crsThematics"].(map[string]interface{})
 
