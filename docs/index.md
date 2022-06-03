@@ -21,18 +21,19 @@ For example:
 ```sql
 select
   id,
-  name
+  name,
+  url
 from
   baleen_namespace
 ```
 
 ```
-+--------------------+-------------+
-| id                 | name        |
-+--------------------+-------------+
-| HQSd02Tjhba3ue==   | Test        |
-| c1x6H2wuyJArcwM==  | Plop        |
-+--------------------+-------------+
++--------------------+-------------+----------------------+
+| id                 | name        | url                  |
++--------------------+-------------+----------------------+
+| HQSd02Tjhba3ue==   | Test        | https://example.net/ |
+| c1x6H2wuyJArcwM==  | Plop        | https://example.com  |
++--------------------+-------------+----------------------+
 ```
 
 ## Documentation
