@@ -1,3 +1,10 @@
+## v0.0.5 [2022-07-07]
+
+_What's new?_
+
+- Update documentation
+- Fix go lint
+
 ## v0.0.3 [2022-07-01]
 
 _What's new?_
