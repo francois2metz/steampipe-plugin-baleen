@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	req "github.com/imroc/req/v3"
 )
@@ -20,10 +19,9 @@ type Namespace struct {
 }
 
 type Account struct {
-	ID          string    `json:"id"`
-	Activated   bool      `json:"activated"`
-	CreatedDate time.Time `json:"createdDate"`
-	Namespaces  []Namespace
+	ID         string      `json:"id"`
+	Activated  bool        `json:"activated"`
+	Namespaces []Namespace `json:"-"`
 }
 
 type ErrorPages struct {
@@ -68,10 +66,10 @@ type CrsThematicStatus struct {
 }
 
 type Waf struct {
-	Enabled             bool `json:"enabled"`
-	DetectionOnly       bool `json:"detectionOnly"`
-	CrsSensitivityLevel bool `json:"crsSensitivityLevel"`
-	CrsThematics        []CrsThematicStatus
+	Enabled             bool                `json:"enabled"`
+	DetectionOnly       bool                `json:"detectionOnly"`
+	CrsSensitivityLevel int                 `json:"crsSensitivityLevel"`
+	CrsThematics        []CrsThematicStatus `json:"-"`
 }
 
 type Headers struct {
