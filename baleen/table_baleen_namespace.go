@@ -88,7 +88,7 @@ func tableBaleenNamespace() *plugin.Table {
 func listNamespace(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	client, err := connect(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("baleen_owasp.listNamespace", "connection_error", err)
+		plugin.Logger(ctx).Error("baleen_namespace.listNamespace", "connection_error", err)
 		return nil, err
 	}
 	account, err := client.GetAccount()
@@ -108,7 +108,7 @@ func getOrigin(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) 
 
 	client, err := connect(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("baleen_owasp.getOrigin", "connection_error", err)
+		plugin.Logger(ctx).Error("baleen_namespace.getOrigin", "connection_error", err)
 		return nil, err
 	}
 
@@ -126,7 +126,7 @@ func getCache(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (
 
 	client, err := connect(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("baleen_owasp.getCache", "connection_error", err)
+		plugin.Logger(ctx).Error("baleen_namespace.getCache", "connection_error", err)
 		return nil, err
 	}
 
@@ -144,7 +144,7 @@ func getWaf(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (in
 
 	client, err := connect(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("baleen_owasp.getWaf", "connection_error", err)
+		plugin.Logger(ctx).Error("baleen_namespace.getWaf", "connection_error", err)
 		return nil, err
 	}
 
@@ -162,7 +162,7 @@ func getHeaders(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 
 	client, err := connect(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("baleen_owasp.getHeaders", "connection_error", err)
+		plugin.Logger(ctx).Error("baleen_namespace.getHeaders", "connection_error", err)
 		return nil, err
 	}
 
