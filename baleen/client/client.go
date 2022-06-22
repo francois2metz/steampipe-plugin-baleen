@@ -247,8 +247,9 @@ func (c *Client) GetWaf(namespace string) (*Waf, error) {
 
 	crsThematicsStatuses := []CrsThematicStatus{}
 
-	for id, enabled := range crsThematicsObject {
-		crsThematic := CrsThematicStatus{ID: id, Enabled: enabled.(bool)}
+	for id, object := range crsThematicsObject {
+		crsThematicObject := object.(map[string]interface{})
+		crsThematic := CrsThematicStatus{ID: id, Enabled: crsThematicObject["enabled"].(bool)}
 		crsThematicsStatuses = append(crsThematicsStatuses, crsThematic)
 	}
 	waf.CrsThematics = crsThematicsStatuses
