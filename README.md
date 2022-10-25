@@ -1,3 +1,5 @@
+![Steampipe + Baleen](docs/baleen-social-graphic.png)
+
 # Baleen plugin for Steampipe
 
 Use SQL to query namespaces, rules and more from [Baleen][].
