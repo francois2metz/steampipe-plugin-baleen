@@ -16,7 +16,7 @@ func tableBaleenNamespace() *plugin.Table {
 		List: &plugin.ListConfig{
 			Hydrate: listNamespace,
 		},
-		HydrateDependencies: []plugin.HydrateDependencies{
+		HydrateConfig: []plugin.HydrateConfig{
 			{Func: getOrigin},
 			{Func: getCache},
 			{Func: getWaf},
