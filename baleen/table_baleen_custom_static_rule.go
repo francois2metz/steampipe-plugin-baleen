@@ -3,9 +3,9 @@ package baleen
 import (
 	"context"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableBaleenCustomStaticRule() *plugin.Table {
@@ -69,7 +69,7 @@ func listCustomStaticRule(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 		plugin.Logger(ctx).Error("baleen_owasp.listCustomStaticRule", "connection_error", err)
 		return nil, err
 	}
-	namespace := d.KeyColumnQuals["namespace"].GetStringValue()
+	namespace := d.EqualsQuals["namespace"].GetStringValue()
 	rules, err := client.GetCustomStaticRules(namespace)
 	if err != nil {
 		plugin.Logger(ctx).Error("baleen_owasp.listCustomStaticRule", err)

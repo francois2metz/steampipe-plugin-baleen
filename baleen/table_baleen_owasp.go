@@ -3,9 +3,9 @@ package baleen
 import (
 	"context"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableBaleenOwasp() *plugin.Table {
@@ -67,7 +67,7 @@ func listOwasp(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		plugin.Logger(ctx).Error("baleen_owasp.listOwasp", "connection_error", err)
 		return nil, err
 	}
-	namespace := d.KeyColumnQuals["namespace"].GetStringValue()
+	namespace := d.EqualsQuals["namespace"].GetStringValue()
 	thematics, err := client.GetCrsThematics(namespace)
 	if err != nil {
 		plugin.Logger(ctx).Error("baleen_owasp.listOwasp.GetCrsThematics", err)

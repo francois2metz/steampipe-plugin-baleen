@@ -3,9 +3,9 @@ package baleen
 import (
 	"context"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableBaleenRewriteRule() *plugin.Table {
@@ -49,7 +49,7 @@ func listRewriteRule(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 		plugin.Logger(ctx).Error("baleen_owasp.listRewriteRule", "connection_error", err)
 		return nil, err
 	}
-	namespace := d.KeyColumnQuals["namespace"].GetStringValue()
+	namespace := d.EqualsQuals["namespace"].GetStringValue()
 	rules, err := client.GetUrlRules(namespace)
 	if err != nil {
 		plugin.Logger(ctx).Error("baleen_owasp.listRewriteRule", err)

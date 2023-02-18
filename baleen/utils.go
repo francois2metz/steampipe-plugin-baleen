@@ -6,7 +6,7 @@ import (
 	"os"
 
 	baleen "github.com/francois2metz/steampipe-plugin-baleen/baleen/client"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
 
 func connect(ctx context.Context, d *plugin.QueryData) (*baleen.Client, error) {
