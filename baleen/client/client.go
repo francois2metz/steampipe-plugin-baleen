@@ -140,7 +140,7 @@ func (c *Client) GetAccount() (*Account, error) {
 		return nil, fmt.Errorf("error retrieving account: %w", err)
 	}
 
-	if !res.IsSuccess() {
+	if !res.IsSuccessState() {
 		return nil, errors.New("error retrieving account: " + res.Status)
 	}
 
@@ -189,7 +189,7 @@ func (c *Client) getWithNamespace(namespace string, url string, data interface{}
 		return res, fmt.Errorf("error retrieving %q: %q", url, err)
 	}
 
-	if !res.IsSuccess() {
+	if !res.IsSuccessState() {
 		return res, fmt.Errorf("error retrieving %q: %q", url, res.Status)
 	}
 
